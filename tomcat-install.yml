@@ -1,0 +1,75 @@
+---
+- name: Setting up apache tomcat
+  hosts: all
+  become: yes
+  tasks:
+    - name: Download mysql repo package
+      get_url:
+        url: https://downloads.apache.org/tomcat/tomcat-8/v8.5.69/bin/apache-tomcat-8.5.69.tar.gz
+        dest: /root/apache-tomcat-8.5.69.tar.gz
+    - name: Extract to /opt
+      unarchive:
+        src: /root/apache-tomcat-8.5.69.tar.gz
+        dest: /opt
+        remote_src: yes
+    - name: Rename tomcat folder
+      command: mv /opt/apache-tomcat-8.5.69 /opt/tomcat
+    - name: Add User tomcat
+      user:
+        name: tomcat
+        shell: /bin/nologin
+    - name: Recursively change ownership of a tomcat
+      file:
+        path: /opt/tomcat
+        state: directory
+        recurse: yes
+        owner: tomcat
+        group: tomcat
+        mode: '0777'
+    - name: Copy systemd file to remote
+      copy:
+        src: /home/david/PycharmProjects/Ansible-OpenMRS/tomcat.service
+        dest: /etc/systemd/system
+        owner: root
+        group: root
+        mode: 0777
+    - name: Reload Daemon
+      command: systemctl daemon-reload
+    - name: start tomcat
+      service:
+        name: tomcat
+        enabled: yes
+        state: started
+    - name: Copy latest openmrs application
+      copy:
+        src: /home/david/PycharmProjects/Ansible-OpenMRS/openmrs.war
+        dest: /opt/tomcat/webapps
+        owner: tomcat
+        group: tomcat
+        mode: 0777
+    - name: Copy users files
+      copy:
+        src: /home/david/PycharmProjects/Ansible-OpenMRS/tomcat-users.xml
+        dest: /opt/tomcat8/conf/
+        owner: tomcat
+        group: tomcat
+        mode: 0777
+    - name: Copy users files
+      copy:
+        src: /home/david/PycharmProjects/Ansible-OpenMRS/tomcat-users.xml
+        dest: /opt/tomcat/conf/
+        owner: tomcat
+        group: tomcat
+        mode: 0777
+    - name: Copy manager context files
+      copy:
+        src: /home/david/PycharmProjects/Ansible-OpenMRS/context.xml
+        dest: /opt/tomcat/webapps/manager/META-INF/
+        owner: tomcat
+        group: tomcat
+        mode: 0777
+
+
+
+
+

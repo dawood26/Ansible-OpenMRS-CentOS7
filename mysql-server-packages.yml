@@ -1,0 +1,39 @@
+---
+- name: installing Java
+  hosts: all
+  become: yes
+  vars:
+    packages:
+      - wget
+      - java-1.8.0-openjdk-devel
+  tasks:
+    - name: install Java version 8
+      yum:
+        name: '{{ packages }}'
+        state: present
+    - name: Download mysql repo package
+      get_url:
+        url: http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
+        dest: /root/mysql-community-release-el7-5.noarch.rpm
+    - name: Install Repo-package mysql
+      yum:
+        name: /root/mysql-community-release-el7-5.noarch.rpm
+        state: present
+    - name: Install mysql database
+      yum:
+        name:
+          - mysql-server
+        state: present
+      notify: start-enable-mysql
+  handlers:
+    - name: start-enable-mysql
+      service:
+        name: mysql
+        enabled: yes
+        state: started
+
+
+
+
+
+

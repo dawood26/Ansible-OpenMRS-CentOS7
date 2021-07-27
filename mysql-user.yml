@@ -1,0 +1,16 @@
+---
+- name:
+  hosts: all
+  become: yes
+  tasks:
+    - yum:
+        name:
+          - MySQL-python
+    - name: Add mysql user
+      mysql_user:
+        name: david
+        password: Daw00d26#
+        priv: '*.*:ALL'
+        state: present
+
+

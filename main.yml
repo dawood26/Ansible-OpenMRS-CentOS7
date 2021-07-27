@@ -1,0 +1,10 @@
+---
+#https://dev.to/andresfmoya/multiple-playbooks-in-ansible-2pdc
+- name: ping
+  import_playbook: ping_servers.yml
+- name: installing Mysql
+  import_playbook: mysql-server-packages.yml
+- name: mysql user management
+  import_playbook: mysql-user.yml
+- name: Install and tomcat openMRS
+  import_playbook: tomcat-install.yml
